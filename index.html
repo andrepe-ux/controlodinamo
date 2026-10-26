@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Comando Futsal - Dínamo Sanjoanense</title>
+  
+  <!-- React & Babel via CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen transition-colors duration-300">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Ficheiro de imagem local na mesma diretoria do index.html
+    const CLUB_LOGO = "./minha-imagem.jpg";
+
+    // Lista de Aplicações / Cartões
+    const INITIAL_APPS = [
+      {
+        id: 1,
+        title: "Database Jogadas",
+        description: "Base de dados e repositório de jogadas de futsal, esquemas táticos e lances preparados.",
+        url: "https://andrepe-ux.github.io/futsal/",
+        category: "Tática"
+      },
+      {
+        id: 2,
+        title: "Analitics Jogo",
+        description: "Plataforma de análise detalhada de jogo, dados estatísticos e métricas de desempenho.",
+        url: "https://andrepe-ux.github.io/pre-analisefutsalpro/",
+        category: "Estatística"
+      },
+      {
+        id: 3,
+        title: "Cortes video",
+        description: "Ferramenta de edição, recorte e gestão de clips de vídeo dos jogos e treinos.",
+        url: "https://andrepe-ux.github.io/newcortes/",
+        category: "Vídeo"
+      },
+      {
+        id: 4,
+        title: "TeamGest",
+        description: "Plataforma de gestão de equipa, convocatórias, atletas e controlo operacional do plantel.",
+        url: "https://futsal-app-txbt.onrender.com/",
+        category: "Gestão"
+      },
+      {
+        id: 5,
+        title: "VideoTatics",
+        description: "Análise tática sobre vídeo, anotações e estudo visual de situações de jogo.",
+        url: "https://andrepe-ux.github.io/FutsalTacticsPRO/",
+        category: "Vídeo & Tática"
+      }
+    ];
+
+    function App() {
+      const [darkMode, setDarkMode] = useState(true);
+      const [dateTime, setDateTime] = useState(new Date());
+      const [apps, setApps] = useState(INITIAL_APPS);
+      const [logoError, setLogoError] = useState(false);
+
+      // Relógio em tempo real
+      useEffect(() => {
+        const timer = setInterval(() => setDateTime(new Date()), 1000);
+        return () => clearInterval(timer);
+      }, []);
+
+      // Atualizar Lucide Icons
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [darkMode, apps]);
+
+      // Formatação de Data e Hora
+      const formattedDate = dateTime.toLocaleDateString('pt-PT', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const formattedTime = dateTime.toLocaleTimeString('pt-PT', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      // Obter Favicon do domínio da aplicação
+      const getFaviconUrl = (url) => {
+        try {
+          const domain = new URL(url).hostname;
+          return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        } catch {
+          return null;
+        }
+      };
+
+      return (
+        <div class={`min-h-screen flex flex-col ${darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
+          
+          {/* HEADER */}
+          <header class={`border-b backdrop-blur-md sticky top-0 z-50 ${darkMode ? 'border-slate-800 bg-slate-900/80' : 'border-slate-200 bg-white/80'}`}>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+              
+              {/* Logo + Título */}
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-xl overflow-hidden bg-white p-1 shadow-md flex items-center justify-center border border-slate-200 shrink-0">
+                  {!logoError ? (
+                    <img 
+                      src={CLUB_LOGO} 
+                      alt="Dínamo Sanjoanense" 
+                      class="h-full w-full object-contain"
+                      onError={() => setLogoError(true)}
+                    />
+                  ) : (
+                    <span class="font-bold text-blue-900 text-sm tracking-tighter">DS</span>
+                  )}
+                </div>
+                <div>
+                  <h1 class="text-xl font-bold tracking-tight">Centro de Comando</h1>
+                  <p class={`text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                    G.R.C. Dínamo Sanjoanense • Futsal
+                  </p>
+                </div>
+              </div>
+
+              {/* Data, Hora e Toggle Dark/Light Mode */}
+              <div class="flex items-center gap-6">
+                <div class="text-right hidden sm:block">
+                  <div class="text-lg font-mono font-semibold text-blue-500">{formattedTime}</div>
+                  <div class={`text-xs capitalize ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{formattedDate}</div>
+                </div>
+
+                <button
+                  onClick={() => setDarkMode(!darkMode)}
+                  class={`p-2.5 rounded-xl border transition-all ${
+                    darkMode 
+                      ? 'bg-slate-800 border-slate-700 text-yellow-400 hover:bg-slate-700' 
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+                  }`}
+                  title="Alterar Tema"
+                >
+                  <i data-lucide={darkMode ? "sun" : "moon"} class="w-5 h-5"></i>
+                </button>
+              </div>
+
+            </div>
+          </header>
+
+          {/* CONTEÚDO PRINCIPAL */}
+          <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <div class="mb-8 flex justify-between items-center">
+              <div>
+                <h2 class="text-2xl font-bold">Aplicações Técnicas</h2>
+                <p class={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  Acesso rápido às ferramentas do departamento de Futsal.
+                </p>
+              </div>
+            </div>
+
+            {/* GRELHA DE CARTÕES */}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {apps.map((app) => (
+                <a
+                  key={app.id}
+                  href={app.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={`group relative rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between ${
+                    darkMode 
+                      ? 'bg-slate-900 border-slate-800 hover:border-blue-500/50 hover:shadow-blue-500/5' 
+                      : 'bg-white border-slate-200 hover:border-blue-500/50 hover:shadow-blue-500/10'
+                  }`}
+                >
+                  <div>
+                    {/* Topo do Cartão: Favicon + Categoria */}
+                    <div class="flex justify-between items-start mb-4">
+                      <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 p-2 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <img 
+                          src={getFaviconUrl(app.url)} 
+                          alt="Icon" 
+                          class="w-6 h-6 object-contain"
+                          onError={(e) => {
+                            e.target.onerror = null; 
+                            e.target.src = "https://cdn-icons-png.flaticon.com/512/53/53283.png";
+                          }}
+                        />
+                      </div>
+                      
+                      <span class={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                        darkMode ? 'bg-blue-950 text-blue-300 border border-blue-800/50' : 'bg-blue-50 text-blue-700 border border-blue-100'
+                      }`}>
+                        {app.category}
+                      </span>
+                    </div>
+
+                    {/* Título & Descrição */}
+                    <h3 class="text-lg font-bold group-hover:text-blue-500 transition-colors flex items-center justify-between">
+                      {app.title}
+                      <i data-lucide="external-link" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500"></i>
+                    </h3>
+                    
+                    <p class={`mt-2 text-sm line-clamp-3 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                      {app.description}
+                    </p>
+                  </div>
+
+                  {/* Rodapé do Cartão */}
+                  <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/60 flex justify-between items-center">
+                    <span class={`text-xs font-semibold ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                      Abrir Aplicação
+                    </span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-blue-500 transform group-hover:translate-x-1 transition-transform"></i>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+          </main>
+
+          {/* FOOTER */}
+          <footer class={`border-t py-6 text-center text-sm ${darkMode ? 'border-slate-800 bg-slate-900/50 text-slate-500' : 'border-slate-200 bg-white text-slate-600'}`}>
+            <p class="font-mono">andrepe@2026</p>
+          </footer>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
